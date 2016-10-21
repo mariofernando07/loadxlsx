@@ -1,0 +1,6 @@
+<div ng2FileDrop (fileOver)="fileOverBase($event)" [uploader]="uploader"> Base drop zone
+</div>
+
+<input type="file" (change)="changeListener($event)">
+
+<input type="button" (click)="readFile()">
