@@ -34,9 +34,9 @@ export class AppComponent implements OnInit {
     let oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
     oReq.responseType = "arraybuffer";
-    oReq.onload = function (e) {
+    oReq.onload = function (e: any) {
       let arraybuffer = oReq.response;
-
+      console.log(arraybuffer);
       /* convert data to binary string */
       let data = new Uint8Array(arraybuffer);
       let arr = new Array();
@@ -66,17 +66,12 @@ export class AppComponent implements OnInit {
 
     reader.onload = function (e: any) {
       console.log(e);
-      let data = e.target.result();
-      let cfb = XLSX.read(data, { type: 'binary' });
-      let wb = XLSX.parse_xlscfb(cfb);
-      wb.SheetNames.forEach(function (sheetName) {
-        // Here is your object
-        var XL_row_object = XLSX.utils.sheet_to_row_object_array(wb.Sheets[sheetName]);
-        var json_object = JSON.stringify(XL_row_object);
-        console.log(json_object);
-
-      })
-
+      let data = e.target.result;
+      let workbook = XLSX.read(data, { type: 'binary' });
+      // let wb = XLSX.parse_xlscfb(cfb);
+      let first_sheet_name = workbook.SheetNames[0];
+      let worksheet = workbook.Sheets[first_sheet_name];
+      console.log(XLSX.utils.sheet_to_json(worksheet));
     };
 
     reader.onerror = function (ex) {
