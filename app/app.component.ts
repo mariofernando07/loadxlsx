@@ -29,9 +29,30 @@ export class AppComponent implements OnInit {
   }
 
   readFile() {
-    console.log(this.file);
-    let workbook = XLSX.readFile(this.file);
-    console.log(workbook);
+    /* set up XMLHttpRequest */
+    let url = "MEDICAMENTOS_ALLNEXUS.xlsx";
+    let oReq = new XMLHttpRequest();
+    oReq.open("GET", url, true);
+    oReq.responseType = "arraybuffer";
+    oReq.onload = function (e) {
+      let arraybuffer = oReq.response;
+
+      /* convert data to binary string */
+      let data = new Uint8Array(arraybuffer);
+      let arr = new Array();
+      for (let i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+      let bstr = arr.join("");
+
+      /* Call XLSX */
+      let workbook = XLSX.read(bstr, { type: "binary" });
+      /* DO SOMETHING WITH workbook HERE */
+      let first_sheet_name = workbook.SheetNames[0];
+      /* Get worksheet */
+      let worksheet = workbook.Sheets[first_sheet_name];
+      console.log(XLSX.utils.sheet_to_json(worksheet));
+    }
+
+    oReq.send();
   }
 
   changeListener($event): void {
